@@ -90,3 +90,12 @@ textarea {
 .outLine{
     text-decoration: line-through;
 }
+.sale-box{
+    position:absolute;
+    top:43px;
+    right:270px;
+}
+.red_text{
+    font-size:36px;
+    color:red;
+}
