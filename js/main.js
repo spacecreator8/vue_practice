@@ -44,9 +44,7 @@
                ></div>
 
    
-              <div class="cart">
-                  <p>Cart({{ cart }})</p>
-              </div>
+
    
               <button
                       v-on:click="addToCart"
@@ -55,6 +53,13 @@
               >
                   Add to cart
               </button>
+
+              <button
+              v-on:click="deleteFromCart"
+              :disabled="!inStock"
+              :class="{ disabledButton: !inStock }"
+                >Delete
+                </button>
           </div>
       </div>
     `,
@@ -80,12 +85,17 @@
                     onSale:false,
                 }
             ],
-            cart: 0
+            
         }    
     },
     methods: {
         addToCart() {
-            this.cart += 1
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId);
+
+        },
+        deleteFromCart() {
+            this.$emit('del-from-cart', this.variants[this.selectedVariant].variantId);
+
         },
         updateProduct(index) {
             this.selectedVariant = index;
@@ -122,6 +132,15 @@
     data: {
         premium: true,
         details:['80% cotton', '20% polyester', 'Gender-neutral'],
+        cart: [],
+
     },
-   
+    methods: {
+        updateCart(id) {
+            this.cart.push(id);
+        },
+        removeCart(id){
+            this.cart.pop(id);
+        }     
+     }     
  })
