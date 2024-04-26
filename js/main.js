@@ -6,6 +6,10 @@ Vue.component('product-tabs', {
         reviews: {
             type: Array,
             required: false
+        },
+        details:{
+            type: Array,
+            required: true
         }
     },     
     template: `
@@ -15,6 +19,7 @@ Vue.component('product-tabs', {
                :class="{ activeTab: selectedTab === tab }"
                v-for="(tab, index) in tabs"
                @click="selectedTab = tab"
+               @mouseover="showCostShipping"
          >{{ tab }}</span>
        </ul>
        <div v-show="selectedTab === 'Reviews'">
@@ -32,16 +37,35 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Make a Review'">
             <product-review></product-review>
        </div>
+       <div v-show="selectedTab === 'Shipping'" >
+            <p>Стоймость доставки:  {{ shippingCost }}</p>
+       </div>
+       <div v-show="selectedTab === 'Details'" >
+            <ul v-for="det in details">
+                <li >{{ det }}</li>
+            </ul>
+       </div>
      </div>
     `,
 
 
     data() {
         return {
-            tabs: ['Reviews', 'Make a Review'],
-            selectedTab: 'Reviews'  // устанавливается с помощью @click
+            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
+            selectedTab: 'Reviews',  // устанавливается с помощью @click
+            shippingCost : 222,
         }
     },
+    methods:{
+        showCostShipping(){
+            eventBus.$emit('custom');
+        }
+    },
+    mounted(){
+        eventBus.$on('result-shipping', function(shippingCost){
+            this.shippingCost=shippingCost;
+        }.bind(this))
+    }
  })
  
  
@@ -151,6 +175,7 @@ Vue.component('product-review', {
    
           <div class="product-info">
               <h1>{{ title }}</h1>
+              <p>{{ description }}</p>
               <div class="sale-box">
                   <div v-if="sale" :class="{red_text: sale}">Sale!</div>
                   <div v-else></div>
@@ -158,9 +183,7 @@ Vue.component('product-review', {
               
               <p v-if="inStock">In stock</p>
               <p v-else>Out of Stock</p>
-              <ul>
-                  <li v-for="detail in details">{{ detail }}</li>
-              </ul>
+
 
               <p>User is premium: {{ premium }}</p>
               <p>Shipping: {{ shipping }}</p>
@@ -189,7 +212,7 @@ Vue.component('product-review', {
                 </button>
           </div>
 
-          <product-tabs :reviews="reviews"></product-tabs>
+          <product-tabs :reviews="reviews" :details="details" ></product-tabs>
 
       </div>
     `,
@@ -199,6 +222,7 @@ Vue.component('product-review', {
             brand: 'Vue Mastery',  
             selectedVariant: 0,                   
             altText: "A pair of socks",
+            description:  " A pair of warm, fuzzy socks",
             variants: [
                 {
                     variantId: 2234,
@@ -230,12 +254,23 @@ Vue.component('product-review', {
         updateProduct(index) {
             this.selectedVariant = index;
             console.log(index);
-        },       
+        },
+        shipping2() {
+            if (this.premium) {
+                return "Free";
+            } else {
+                return 2.99
+            }
+         }       
     },
     mounted() {
         eventBus.$on('review-submitted', productReview => {
             this.reviews.push(productReview)
-        }) 
+        }),
+        eventBus.$on('custom', () => {
+            let shippingCost = this.shipping2();
+            eventBus.$emit('result-shipping', shippingCost);
+        }); 
     },
     computed: {
         title() {
