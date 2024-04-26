@@ -176,14 +176,19 @@ Vue.component('product-review', {
           <div class="product-info">
               <h1>{{ title }}</h1>
               <p>{{ description }}</p>
+              <a v-bind:href="link">More products like this</a>
               <div class="sale-box">
-                  <div v-if="sale" :class="{red_text: sale}">Sale!</div>
+                  <div v-if="sale" :class="{red_text: sale}">On sale!</div>
                   <div v-else></div>
               </div>
               
               <p v-if="inStock">In stock</p>
-              <p v-else>Out of Stock</p>
+              <p v-else :class="{out_of_stock:  !inStock}">Out of Stock</p>
 
+              <p>Sizes:</p>
+              <ul>
+                  <li v-for="size in sizes">{{ size }}</li>
+              </ul>
 
               <p>User is premium: {{ premium }}</p>
               <p>Shipping: {{ shipping }}</p>
@@ -223,6 +228,8 @@ Vue.component('product-review', {
             selectedVariant: 0,                   
             altText: "A pair of socks",
             description:  " A pair of warm, fuzzy socks",
+            link:"https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=sock",
+            sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
             variants: [
                 {
                     variantId: 2234,

@@ -99,3 +99,6 @@ textarea {
     font-size:36px;
     color:red;
 }
+.out_of_stock{
+    text-decoration: line-through
+}
