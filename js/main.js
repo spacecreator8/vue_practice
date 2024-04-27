@@ -319,7 +319,9 @@ Vue.component('product-review', {
         },
         removeCart(id){
             this.cart.pop(id);
-        }
-             
+        },
+        delStuff(id){
+            this.cart.splice(id,1);
+        }    
      }     
  })
